@@ -97,4 +97,23 @@ describe('PublicIPAddressResolver', () => {
       })
     })
   })
+
+  describe('error event', () => {
+    beforeEach(() => {
+      resolver._api.yieldsAsync(new Error('Failed to connect'))
+    })
+
+    it('should not be emitted unless it is being listened for', () =>
+      resolver.resolve().catch(() => new Promise((resolve, reject) =>
+        setImmediate(resolve)
+      ))
+    )
+
+    it('should be emitted when it is being listened for', () =>
+      new Promise((resolve, reject) => {
+        resolver.on('error', resolve)
+        resolver.resolve()
+      })
+    )
+  })
 })

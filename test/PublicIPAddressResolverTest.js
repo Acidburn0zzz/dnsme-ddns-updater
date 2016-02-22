@@ -33,4 +33,68 @@ describe('PublicIPAddressResolver', () => {
       )
     })
   })
+
+
+  describe('change event', () => {
+    beforeEach(() => {
+      sinon.stub(global, 'setInterval').returns(8)
+      sinon.stub(global, 'clearInterval')
+    })
+
+    afterEach(() => {
+      global.setInterval.restore()
+      global.clearInterval.restore()
+    })
+
+    it('should be emitted when the result of resolve() changes', () =>
+      new Promise((resolve, reject) => {
+        resolver.on('change', ip => resolve())
+        resolver.resolve()
+          .then(() => resolver._api.yieldsAsync(null, '10.1.1.1'))
+          .then(() => resolver.resolve())
+      })
+    )
+
+    it('should not be emitted when the result of resolve does not change', () =>
+      new Promise((resolve, reject) => {
+        resolver.on('change', ip => reject(new Error('change event emitted')))
+        resolver.resolve()
+          .then(ip => resolver.resolve())
+          .then(() => resolve())
+      })
+    )
+
+    describe('on("change")', () => {
+      it('should cause setInterval to be called', () => {
+        resolver.on('change', ip => {})
+        assert(setInterval.calledOnce, 'setInterval was not called')
+      })
+
+      it('should only cause setInterval to be called once', () => {
+        resolver.on('change', ip => {})
+        resolver.on('change', ip => {})
+        assert.strictEqual(setInterval.callCount, 1)
+      })
+
+      it('should cause an API call if resolve() has not already been called', () => {
+        resolver.on('change', ip => {})
+        assert(resolver._api.calledOnce, 'resolver API was not called')
+      })
+
+      it('should not cause an API call if resolve() has already been called', () =>
+        resolver.resolve().then(ip => {
+          resolver.on('change', ip => {})
+          assert.strictEqual(resolver._api.callCount, 1)
+        })
+      )
+    })
+
+    describe('removeAllListeners("change")', () => {
+      it('should cause clearInterval to be called', () => {
+        resolver.on('change', ip => {})
+        resolver.removeAllListeners('change')
+        assert(clearInterval.calledOnce, 'clearInterval was not called')
+      })
+    })
+  })
 })

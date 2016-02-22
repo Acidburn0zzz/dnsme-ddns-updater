@@ -29,7 +29,11 @@ describe('RecordUpdater', () => {
   describe('updateRecord()', () => {
     beforeEach(() => {
       updater = new Updater({ username, password, recordId })
-      updater._fetch = fetchStub = sinon.stub().returns(Promise.resolve())
+      updater._fetch = fetchStub = sinon.stub().returns(Promise.resolve({
+        ok: true,
+        status: 200,
+        text: () => Promise.resolve("success")
+      }))
     })
 
     it('should call fetch with the correct DNS Made Easy URL', () =>
@@ -62,5 +66,39 @@ describe('RecordUpdater', () => {
         assert(fetchStub.calledWithMatch(/\?.*ip=10.0.0.1\b/))
       })
     )
+
+    describe('when response code is something other than 200', () => {
+      beforeEach(() => {
+        fetchStub.returns(Promise.resolve({
+          ok: false,
+          status: 502,
+          text: () => Promise.resolve("failed")
+        }))
+      })
+
+      it('should reject', () =>
+        updater.updateRecord('10.0.0.1').then(
+          () => assert.fail('did not get rejected'),
+          () => Promise.resolve()
+        )
+      )
+    })
+
+    describe('when response is 200 but body is something other than "success"', () => {
+      beforeEach(() => {
+        fetchStub.returns(Promise.resolve({
+          ok: true,
+          status: 200,
+          text: () => Promise.resolve("error-auth")
+        }))
+      })
+
+      it('should reject', () =>
+        updater.updateRecord('10.0.0.1').then(
+          () => assert.fail('did not get rejected'),
+          () => Promise.resolve()
+        )
+      )
+    })
   })
 })

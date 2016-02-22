@@ -4,11 +4,18 @@ import sinon from 'sinon'
 import PublicIPAddressResolver from '../lib/PublicIPAddressResolver.js'
 
 describe('PublicIPAddressResolver', () => {
+  const checkInterval = 90
   let resolver
 
   beforeEach(() => {
-    resolver = new PublicIPAddressResolver()
+    resolver = new PublicIPAddressResolver({checkInterval})
     resolver._api = sinon.stub().yieldsAsync(null, "10.0.0.1")
+  })
+
+  it('should throw an error when given a checkInterval option lower than 30', () => {
+    assert.throws(() => new PublicIPAddressResolver({ checkInterval: 1 }))
+    assert.throws(() => new PublicIPAddressResolver({ checkInterval: 29 }))
+    assert.doesNotThrow(() => new PublicIPAddressResolver({ checkInterval: 30 }))
   })
 
   describe('resolve()', () => {
@@ -33,7 +40,6 @@ describe('PublicIPAddressResolver', () => {
       )
     })
   })
-
 
   describe('change event', () => {
     beforeEach(() => {
@@ -74,6 +80,11 @@ describe('PublicIPAddressResolver', () => {
         resolver.on('change', ip => {})
         resolver.on('change', ip => {})
         assert.strictEqual(setInterval.callCount, 1)
+      })
+
+      it('should call setInterval with the checkInterval constructor option', () => {
+        resolver.on('change', ip => {})
+        assert(setInterval.calledWithMatch(sinon.match.func, 90000))
       })
 
       it('should call setInterval with a callback that calls resolve()', () => {

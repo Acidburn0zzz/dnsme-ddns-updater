@@ -76,6 +76,14 @@ describe('PublicIPAddressResolver', () => {
         assert.strictEqual(setInterval.callCount, 1)
       })
 
+      it('should call setInterval with a callback that calls resolve()', () => {
+        sinon.spy(resolver, 'resolve')
+        resolver.on('change', ip => {})
+        assert.strictEqual(resolver.resolve.callCount, 1)
+        setInterval.yield()
+        assert.strictEqual(resolver.resolve.callCount, 2)
+      })
+
       it('should cause an API call if resolve() has not already been called', () => {
         resolver.on('change', ip => {})
         assert(resolver._api.calledOnce, 'resolver API was not called')

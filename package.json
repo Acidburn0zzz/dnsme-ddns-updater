@@ -1,0 +1,38 @@
+{
+  "name": "dnsme-ddns-updater",
+  "version": "1.0.0",
+  "description": "DNS Made Easy dynamic A record updater",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers js:babel-register",
+    "compile": "./make.js",
+    "prepublish": "npm run compile && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/limulus/dnsme-ddns-updater.git"
+  },
+  "keywords": [
+    "dns",
+    "dynamic",
+    "ip",
+    "dnsmadeeasy"
+  ],
+  "author": "Eric McCarthy <eric@limulus.net> (http://www.limulus.net)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/limulus/dnsme-ddns-updater/issues"
+  },
+  "homepage": "https://github.com/limulus/dnsme-ddns-updater#readme",
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-register": "^6.5.2",
+    "mocha": "^2.4.5",
+    "sinon": "^1.17.3"
+  },
+  "dependencies": {
+    "ipify": "^1.1.0",
+    "node-fetch": "^1.3.3"
+  }
+}

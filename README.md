@@ -1,2 +1,3 @@
 # dnsme-ddns-updater
-DNS Made Easy dynamic A record updater
+
+DNS Made Easy dynamic record updater

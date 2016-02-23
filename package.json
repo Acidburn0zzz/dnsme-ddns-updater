@@ -1,6 +1,6 @@
 {
   "name": "dnsme-ddns-updater",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "DNS Made Easy dynamic record updater",
   "main": "index.js",
   "bin": {

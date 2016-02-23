@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "DNS Made Easy dynamic A record updater",
   "main": "index.js",
+  "bin": {
+    "dnsme-ddns-updater": "./dist/es5/bin/dnsme-ddns-updater.js"
+  },
   "scripts": {
     "test": "mocha --compilers js:babel-register",
     "compile": "./make.js",
-    "prepublish": "npm run compile && npm test"
+    "prepublish": "npm run compile",
+    "preversion": "npm test"
   },
   "repository": {
     "type": "git",
@@ -32,7 +36,10 @@
     "sinon": "^1.17.3"
   },
   "dependencies": {
+    "commander": "^2.9.0",
+    "findup-sync": "^0.3.0",
     "ipify": "^1.1.0",
-    "node-fetch": "^1.3.3"
+    "node-fetch": "^1.3.3",
+    "sysexits": "^1.0.1"
   }
 }

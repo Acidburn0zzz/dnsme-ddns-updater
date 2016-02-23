@@ -12,7 +12,7 @@ mkdir('-p', 'dist/es5')
 
 Promise.all([
   babel('lib'),
-  // babel('bin'),
+  babel('bin'),
   babel('index.js')
 ]).then(function () {
   chmod('a+x', 'dist/es5/bin/*')

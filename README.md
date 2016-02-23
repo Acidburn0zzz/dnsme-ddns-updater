@@ -58,3 +58,39 @@ updater.updateRecord('10.0.0.1')
   .then(() => console.log('Updated!'))
   .catch(err => console.warn(err.message))
 ```
+
+## OS X launchd Setup
+
+Create a `.plist` file in `/Library/LaunchDaemons`, for example:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.example.dnsme-ddns-updater</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/usr/local/bin/dnsme-ddns-updater</string>
+    <string>--username=bob@example.com</string>
+    <string>--record-id=8882239</string>
+    <string>--password=theyllneverguess</string>
+    <string>--check-interval=300</string>
+  </array>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/var/log/dnsme-ddns-updater.log</string>
+  <key>StandardErrorPath</key>
+  <string>/var/log/dnsme-ddns-updater.log</string>
+</dict>
+</plist>
+```
+
+Then, for example, run:
+
+```sh
+sudo launchctl load /Library/LaunchDaemons/com.example.dnsme-ddns-updater.plist
+```

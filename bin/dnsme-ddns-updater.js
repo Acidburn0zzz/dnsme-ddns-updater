@@ -25,7 +25,21 @@ if (username === undefined || recordId === undefined || password === undefined) 
 
 const updater = new DNSMEDDNSUpdater({username, recordId, password, checkInterval})
 updater
-  .on('change', ip => console.warn(`public IP change: ${ip}`))
-  .on('error', err => console.warn((err && err.message) || err))
+  .on('change', ip => warn(`public IP change: ${ip}`))
+  .on('error', err => warn((err && err.message) || err))
 
+info(`starting`)
 process.title = packageInfo.name
+
+function info (message) {
+  console.info(formatLogMessage(message))
+}
+
+function warn (message) {
+  console.warn(formatLogMessage(message))
+}
+
+function formatLogMessage (message) {
+  const datetime = (new Date()).toUTCString()
+  return `[${datetime}]: ${message}`
+}

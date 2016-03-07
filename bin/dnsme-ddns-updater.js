@@ -5,9 +5,11 @@ import findUpSync from 'findup-sync'
 import sysexits from 'sysexits'
 import DNSMEDDNSUpdater from '../index.js'
 
+const packageInfo = require(findUpSync('package.json', {cwd:__dirname}))
+
 cmdline
   .description('Keeps DNS Made Easy dynamic DNS records up-to-date')
-  .version(require(findUpSync('package.json', {cwd:__dirname})).version)
+  .version(packageInfo.version)
   .option('--username [username]', 'DNS Made Easy username (required)')
   .option('--record-id [recordId]', 'Record identifier (required)')
   .option('--password [password]', 'Record password (required)')
@@ -25,3 +27,5 @@ const updater = new DNSMEDDNSUpdater({username, recordId, password, checkInterva
 updater
   .on('change', ip => console.warn(`public IP change: ${ip}`))
   .on('error', err => console.warn((err && err.message) || err))
+
+process.title = packageInfo.name
